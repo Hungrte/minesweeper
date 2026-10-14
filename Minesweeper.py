@@ -10,7 +10,6 @@ class Mine:
         self.opencells = 0
         self.totalcells = 0
         self.mines = 0
-        self.keep_going = True
         self.lose = False
 
     def calculatetotal(self):
@@ -93,10 +92,13 @@ class Mine:
             for nc in range(max(0, c - 1), min(cols, c + 2))
             if (nr, nc) != (r, c)
         ]
-    
+
     def Reveal(self, r, c):
         # yoo this reveals the cells omgg
-        if not self.keep_going:
+        if self.opencells == self.totalcells:
+            return
+        
+        if self.lose:
             return
         
         neighbours = self.Getneighbours(r, c, self.hgrid)
@@ -115,6 +117,7 @@ class Mine:
                 continue
 
             self.hgrid[row][cell] = self.grid[row][cell]
+            self.opencells += 1
 
             if self.hgrid[row][cell] == 0:
                 neighbours = self.Getneighbours(row, cell, self.hgrid)
@@ -134,19 +137,20 @@ class Mine:
         self.Showmines()
     
     def Showmines(self):
-        self.keep_going = False
         coords = self.Getcoordinates(self.hgrid)
         for row, cell in coords:
             if self.grid[row][cell] == 9:
                 self.hgrid[row][cell] = self.grid[row][cell]
     
     def count(self):
-        self.opencells = 0
+        counted_opencells = 0
 
         hcoords = self.Getcoordinates(self.hgrid)
         for row, cell in hcoords:
             if not self.hgrid[row][cell] == '#':
-                self.opencells += 1
+                counted_opencells += 1
+        
+        return counted_opencells
     
     def setup(self, size, mines):
         self.Createspace(int(size))
@@ -175,7 +179,7 @@ if __name__ == '__main__':
     game = Mine()
     game.setup(size, mines)
 
-    while game.opencells < game.totalcells and game.keep_going:
+    while game.opencells < game.totalcells and not game.lose:
         print('Print a coordinate! (x, y)')
         x = get_integer('X = ', 0, game.size - 1)
         y = get_integer('Y = ', 0, game.size - 1)
@@ -183,6 +187,7 @@ if __name__ == '__main__':
         game.Displayspace()
         print('Total cells', game.totalcells)
         print('Open cells', game.opencells)
+        print(game.lose)
     
     if game.lose:
         print('Game Over')
