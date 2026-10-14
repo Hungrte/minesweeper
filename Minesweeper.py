@@ -12,6 +12,8 @@ class Mine:
         self.mines = 0
         self.lose = False
 
+        self.status = 'running'
+
     def calculatetotal(self):
         self.totalcells = (self.size ** 2) - self.mines # because like square we subtract mines so it doesn count mines
 
@@ -95,13 +97,11 @@ class Mine:
 
     def Reveal(self, r, c):
         # yoo this reveals the cells omgg
-        if self.opencells == self.totalcells:
+        if not self.status == 'running':
             return
-        
         if self.lose:
             return
         
-        neighbours = self.Getneighbours(r, c, self.hgrid)
         pile = [(r, c)]
         
         if not pile:
@@ -117,6 +117,7 @@ class Mine:
                 continue
 
             self.hgrid[row][cell] = self.grid[row][cell]
+
             self.opencells += 1
 
             if self.hgrid[row][cell] == 0:
@@ -125,16 +126,24 @@ class Mine:
                 for nlist in neighbours:
                     pile.append(nlist)
 
-        self.Condition(r, c)
+        if self.grid[r][c] == 9:
+            self.Condition(r, c)
+            return
 
-        self.count()
+        if self.opencells >= self.totalcells:
+            self.status = 'won'
     
     def Condition(self, r, c):
-        # checks if theres a mine
-        if not self.hgrid[r][c] == 9:
+        # Did the player hit a mine?
+        if self.grid[r][c] == 9:
+            self.lose = True
+            self.status = 'lost'
+            self.Showmines()
             return
-        self.lose = True
-        self.Showmines()
+
+        # Did the player reveal every safe cell?
+        if self.opencells >= self.totalcells:
+            self.status = 'won'
     
     def Showmines(self):
         coords = self.Getcoordinates(self.hgrid)
@@ -156,7 +165,6 @@ class Mine:
         self.Createspace(int(size))
         self.Placemines(int(mines))
         self.Checkmines()
-        self.count()
         self.calculatetotal()
         self.Displayspace()
     
@@ -179,19 +187,19 @@ if __name__ == '__main__':
     game = Mine()
     game.setup(size, mines)
 
-    while game.opencells < game.totalcells and not game.lose:
+    while game.status == 'running':
         print('Print a coordinate! (x, y)')
         x = get_integer('X = ', 0, game.size - 1)
         y = get_integer('Y = ', 0, game.size - 1)
-        game.Reveal(int(y), int(x))
+        game.Reveal(y, x)
         game.Displayspace()
         print('Total cells', game.totalcells)
         print('Open cells', game.opencells)
-        print(game.lose)
+        print('Status: ', game.status)
     
-    if game.lose:
+    if game.status == 'lost':
         print('Game Over')
-    else:
+    elif game.status == 'won':
         print('You won!')
     
     game.Showmines()
