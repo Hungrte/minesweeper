@@ -60,7 +60,7 @@ class Mine:
         for row_index, cell_index in random_sample:
             self.grid[row_index][cell_index] = 9
 
-        print(random_sample, 'Picked')
+        # print(random_sample, 'Picked') # Shows the list of mines placed
 
     def Getcoordinates(self, grid):
         final_coords = []
@@ -98,9 +98,6 @@ class Mine:
         # yoo this reveals the cells omgg
         if not self.keep_going:
             return
-        
-        r -= 1
-        c -= 1
         
         neighbours = self.Getneighbours(r, c, self.hgrid)
         pile = [(r, c)]
@@ -180,8 +177,8 @@ if __name__ == '__main__':
 
     while game.opencells < game.totalcells and game.keep_going:
         print('Print a coordinate! (x, y)')
-        x = get_integer('X = ', 1, game.size)
-        y = get_integer('Y = ', 1, game.size)
+        x = get_integer('X = ', 0, game.size - 1)
+        y = get_integer('Y = ', 0, game.size - 1)
         game.Reveal(int(y), int(x))
         game.Displayspace()
         print('Total cells', game.totalcells)
