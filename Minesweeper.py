@@ -196,7 +196,7 @@ if __name__ == '__main__':
         print('Total cells', game.totalcells)
         print('Open cells', game.opencells)
         print('Status: ', game.status)
-    
+
     if game.status == 'lost':
         print('Game Over')
     elif game.status == 'won':
