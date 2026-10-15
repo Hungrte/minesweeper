@@ -3,9 +3,13 @@ from Minesweeper import Mine
 
 app = ctk.CTk()
 app.title('Minesweeper')
+board_frame = ctk.CTkFrame(
+    master=app,
+)
+board_frame.grid()
 
 size = 10
-mines = 20
+mines = 10
 cells = {}
 
 game = Mine()
@@ -19,7 +23,7 @@ def ui():
     for row in range(size):
         for column in range(size):
             cell = ctk.CTkButton(
-                app,
+                board_frame,
                 text=f'#',
                 height=55,
                 width=55,
