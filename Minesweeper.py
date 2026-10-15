@@ -166,8 +166,7 @@ class Mine:
         self.Placemines(int(mines))
         self.Checkmines()
         self.calculatetotal()
-        self.Displayspace()
-    
+
 def get_integer(prompt, minimum, maximum):
     while True:
         try:
