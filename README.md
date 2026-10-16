@@ -1,67 +1,85 @@
 # Minesweeper
 
-A Minesweeper game written in Python that runs in the terminal. Choose a board size and a number of mines, then open every safe cell without hitting a mine.
+A Minesweeper game built with Python, featuring a reusable game-logic class and a graphical interface made with CustomTkinter.
 
-> **Status:** playable in the terminal. A graphical interface is in development on the `ui` branch.
+The project started as a terminal-based game and is now being developed into a GUI version with clickable cells, a restart button, and a class-based interface.
+
+**Status:** Playable GUI in development on the `ui` branch.
 
 ## Features
 
+### Game Logic
 - Custom board size and mine count
-- Random mine placement, with every other cell showing how many of its 8 neighbours are mines
-- Opening an empty cell automatically opens the connected empty region and its numbered border (flood fill)
-- Flood fill uses a loop instead of recursion, so large boards don't hit Python's recursion limit
-- A single game status (`running`, `won` or `lost`); moves are ignored once the game is over
-- All mines are revealed when the game ends
-- Input validation: invalid or out-of-range input asks again instead of crashing
+- Random mine placement
+- Neighbor counting for all eight surrounding cells
+- Automatic revealing of connected empty cells using iterative flood fill
+- Separate answer and player grids
+- Win and loss detection
+- All mines revealed when the game ends
+- Moves ignored after the game is over
+
+### Graphical Interface
+- Clickable cells
+- Restart button
+- Class-based GUI structure using `MinesweeperApp`
+- Game logic kept separate from the interface through the `Mine` class
+- Targeted cell updates to avoid refreshing the entire board after every move
 
 ## Requirements
 
-- Python 3.6 or newer
-- No third-party packages, only the standard library
+- Python 3.10 or newer
+- CustomTkinter
+
+Install the GUI dependency with:
+
+```bash
+python -m pip install customtkinter
+```
 
 ## Run
 
+From the project directory, run:
+
 ```bash
-python minesweeper.py
+python ui.py
 ```
 
-## How to play
+Make sure `ui.py` and `Minesweeper.py` are in the same directory.
 
-1. Enter a board size (at least 2) and a number of mines (at least 1, leaving at least one safe cell).
-2. Each turn, enter an **X** (column) and a **Y** (row) coordinate. Both count from 0, so `0, 0` is the top-left cell.
-3. Read the board:
-   - `#` is a hidden cell
-   - a number is how many of the 8 surrounding cells are mines
-   - `9` is a mine, shown when the game ends
-4. Open every safe cell to win. Open a mine and you lose.
+## How to Play
 
-Example board mid-game:
+1. Launch the game.
+2. Click a hidden cell to reveal it.
+3. Numbers indicate how many of the eight neighboring cells contain mines.
+4. Revealing a mine ends the game.
+5. Reveal every safe cell to win.
+6. Use the **Restart** button to start a new game.
 
-```
----------------------
-# # # # #
-# 1 1 1 #
-# 1 0 1 #
-# 1 1 1 #
-# # # # #
-```
+## How It Works
 
-## How it works
+The project separates game logic from the graphical interface.
 
-The game keeps two grids of the same size:
+- **`Minesweeper.py`** contains the `Mine` class, which manages the board, mine placement, neighbor counts, cell revealing, and win/loss conditions.
+- **`ui.py`** contains the `MinesweeperApp` class, which manages the window, widgets, click events, board updates, and restarting the game.
 
-- the **answer grid** holds `9` for mines and a neighbour count for every other cell, calculated once after the mines are placed
-- the **player grid** starts as all `#`, and cells are copied across from the answer grid as they are revealed
+The game maintains two grids:
 
-Safe cells are counted as they open and compared with the total number of safe cells to decide whether the player has won. The game logic lives in the `Mine` class, which keeps its state separate from the terminal loop so a graphical interface can reuse it.
+- **Answer grid:** Stores mines as `9` and the number of neighboring mines for every safe cell.
+- **Player grid:** Starts with hidden cells represented by `#` and updates as cells are revealed.
+
+The interface uses the game logic's state to determine which cells to display. Keeping these responsibilities separate makes it easier to improve the GUI without rewriting the underlying game.
 
 ## Roadmap
 
-- [ ] Flags
-- [ ] Graphical interface (pygame), in progress on the `ui` branch
-- [ ] First click is always safe
-- [ ] Restart and timer
-- [ ] Tests and code cleanup
+- [x] Core Minesweeper game logic
+- [x] Basic CustomTkinter GUI
+- [x] Class-based GUI structure
+- [x] Clickable cells and restart button
+- [ ] Refactor the board rendering to use Tkinter Canvas
+- [ ] Add mine flags
+- [ ] Add a timer
+- [ ] Make the first click safe
+- [ ] Add tests and further code cleanup
 
 ## Author
 
