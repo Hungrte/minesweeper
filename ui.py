@@ -1,6 +1,7 @@
 from typing import Tuple
 import customtkinter as ctk
 from Minesweeper import Mine
+import time
 class MinesweeperApp(ctk.CTk):
     def __init__(self, board_size, mine_count, **kwargs):
         super().__init__(**kwargs)
@@ -41,8 +42,8 @@ class MinesweeperApp(ctk.CTk):
                 cell = ctk.CTkButton(
                     self.board_frame,
                     text='#',
-                    height=55,
-                    width=55,
+                    height=25,
+                    width=25,
                     command=lambda r=row, c=column: self.on_click(r, c)
                 )
                 cell.grid(row=row, column=column, padx=2, pady=2)
@@ -80,5 +81,5 @@ class MinesweeperApp(ctk.CTk):
         self.set_board_enabled(True)
 
 if __name__ == '__main__':
-    app = MinesweeperApp(10, 3)
+    app = MinesweeperApp(50, 3)
     app.mainloop()
