@@ -2,7 +2,7 @@ from typing import Tuple
 import customtkinter as ctk
 from Minesweeper import Mine
 class MinesweeperApp(ctk.CTk):
-    def __init__(self, size, mines,  fg_color: str | Tuple[str, str] | None = None, **kwargs):
+    def __init__(self, size, mines, **kwargs):
         super().__init__(**kwargs)
         
         self.title('Minesweeper')
