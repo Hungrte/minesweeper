@@ -1,81 +1,84 @@
+from typing import Tuple
 import customtkinter as ctk
 from Minesweeper import Mine
-
-app = ctk.CTk()
-app.title('Minesweeper')
-board_frame = ctk.CTkFrame(
-    master=app
-)
-
-board_frame.grid(
-    row=1,
-    column=0,
-    padx=10,
-    pady=10
-)
-
-app.grid_columnconfigure(0, weight=1)
-
-size = 10
-mines = 10
-cells = {}
-
-game = Mine()
-game.setup(size, mines)
-
-def on_click(r, c):
-    game.Reveal(r, c)
-    refresh_board()
-
-def restart_game():
-    global game
-    game = Mine()
-    game.setup(size, mines)
-    refresh_board()
-
-def ui():
-    title = ctk.CTkLabel(
-        app,
-        text='Minesweeper',
-        font=('Arial', 24, 'bold')
-    )
-    title.grid(row=0, column=0)
-    
-    restart = ctk.CTkButton(
-        app,
-        text='Restart',
-        command=restart_game
-    )
-    restart.grid(row=2, column=0, pady=10)
-    
-    for row in range(size):
-        for column in range(size):
-            cell = ctk.CTkButton(
-                board_frame,
-                text='#',
-                height=55,
-                width=55,
-                command=lambda r=row, c=column: on_click(r, c)
-            )
-            cell.grid(row=row, column=column, padx=2, pady=2)
-            cells[(row, column)] = cell
-
-
-def refresh_board():
-    for (r, c), cell in cells.items():
-        # Turns 0 into an empty cell
-        cell.configure(text=game.hgrid[r][c])
-        if not game.status == 'running':
-            cell.configure(state='disabled')
-        else:
-            cell.configure(state='normal')
+class MinesweeperApp(ctk.CTk):
+    def __init__(self, size, mines,  fg_color: str | Tuple[str, str] | None = None, **kwargs):
+        super().__init__(**kwargs)
         
-        if game.hgrid[r][c] == 0:
-            cell.configure(text='')
+        self.title('Minesweeper')
+        
+        self.size = size
+        self.mines = mines
+        self.cells = {}
+        
+        self.game = Mine()
+        self.game.setup(self.size, self.mines)
+        
+        self.board_frame = ctk.CTkFrame(master=self)
+        self.board_frame.grid(row=1, column=0, padx=10, pady=10)
 
-ui()
+        self.grid_columnconfigure(0, weight=1)
+        
+        self.create_ui()
+    
+    def create_ui(self):
+        title = ctk.CTkLabel(
+            self,
+            text='Minesweeper',
+            font=('Arial', 24, 'bold')
+        )
+        title.grid(row=0, column=0)
+            
+        restart = ctk.CTkButton(
+            self,
+            text='Restart',
+            command=self.restart_game
+        )
+        restart.grid(row=2, column=0, pady=10)
+            
+        for row in range(self.size):
+            for column in range(self.size):
+                cell = ctk.CTkButton(
+                    self.board_frame,
+                    text='#',
+                    height=55,
+                    width=55,
+                    command=lambda r=row, c=column: self.on_click(r, c)
+                )
+                cell.grid(row=row, column=column, padx=2, pady=2)
+                self.cells[(row, column)] = cell
+    
+    def update_cells(self, coords=None):
+        if coords is None:
+            coords = self.cells.keys()
 
-app.mainloop()
+        for r, c in coords:
+            value = self.game.hgrid[r][c]
+            text = '' if value == 0 else value
+            self.cells[(r, c)].configure(text=text)
 
+    def set_board_enabled(self, enabled):
+        state = 'normal' if enabled else 'disabled'
 
+        for cell in self.cells.values():
+            cell.configure(state=state)
+    
+    def on_click(self, r, c):
+        revealed = self.game.Reveal(r, c)
 
+        if revealed:
+            self.update_cells(revealed)
+
+        if self.game.status != 'running':
+            self.set_board_enabled(False)
+
+    def restart_game(self):
+        self.game = Mine()
+        self.game.setup(self.size, self.mines)
+
+        self.update_cells()
+        self.set_board_enabled(True)
+
+if __name__ == '__main__':
+    app = MinesweeperApp(10, 3)
+    app.mainloop()
