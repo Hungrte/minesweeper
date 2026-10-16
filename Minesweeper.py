@@ -162,6 +162,7 @@ class Mine:
         return counted_opencells
     
     def setup(self, size, mines):
+        self.status = 'Running'
         self.Createspace(int(size))
         self.Placemines(int(mines))
         self.Checkmines()
