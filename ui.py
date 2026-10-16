@@ -52,7 +52,7 @@ def ui():
         for column in range(size):
             cell = ctk.CTkButton(
                 board_frame,
-                text=f'#',
+                text='#',
                 height=55,
                 width=55,
                 command=lambda r=row, c=column: on_click(r, c)
@@ -64,14 +64,14 @@ def ui():
 def refresh_board():
     for (r, c), cell in cells.items():
         # Turns 0 into an empty cell
-        if game.hgrid[r][c] == 0:
-            cell.configure(text='')
-            continue
         cell.configure(text=game.hgrid[r][c])
         if not game.status == 'running':
             cell.configure(state='disabled')
-            continue
-        cell.configure(state='normal')
+        else:
+            cell.configure(state='normal')
+        
+        if game.hgrid[r][c] == 0:
+            cell.configure(text='')
 
 ui()
 
