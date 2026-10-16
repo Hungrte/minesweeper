@@ -4,9 +4,14 @@ from Minesweeper import Mine
 app = ctk.CTk()
 app.title('Minesweeper')
 board_frame = ctk.CTkFrame(
-    master=app,
+    master=app
 )
-board_frame.grid()
+board_frame.grid(
+    row=1,
+    column=0,
+    padx=10,
+    pady=10
+)
 
 size = 10
 mines = 10
@@ -20,6 +25,13 @@ def on_click(r, c):
     refresh_board()
 
 def ui():
+    title = ctk.CTkLabel(
+        app,
+        text='Minesweeper',
+        font=('Arial', 24, 'bold')
+    )
+    title.grid(row=0, column=0)
+    
     for row in range(size):
         for column in range(size):
             cell = ctk.CTkButton(
@@ -34,6 +46,10 @@ def ui():
 
 def refresh_board():
     for (r, c), button in cells.items():
+        # Turns 0 into an empty cell
+        if game.hgrid[r][c] == 0:
+            button.configure(text='')
+            continue
         button.configure(text=game.hgrid[r][c])
 
 ui()
