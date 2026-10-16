@@ -10,7 +10,6 @@ class Mine:
         self.opencells = 0
         self.totalcells = 0
         self.mines = 0
-        self.lose = False
 
         self.status = 'running'
 
@@ -96,16 +95,14 @@ class Mine:
         ]
 
     def Reveal(self, r, c):
-        # yoo this reveals the cells omgg
         if not self.status == 'running':
-            return
-        if self.lose:
-            return
+            return []
         
         pile = [(r, c)]
+        revealed = []
         
         if not pile:
-            return
+            return []
         
         i = 0
 
@@ -118,7 +115,9 @@ class Mine:
 
             self.hgrid[row][cell] = self.grid[row][cell]
 
-            self.opencells += 1
+            if not self.grid[row][cell] == 9:
+                self.opencells += 1
+            revealed.append((row, cell))
 
             if self.hgrid[row][cell] == 0:
                 neighbours = self.Getneighbours(row, cell, self.hgrid)
@@ -126,31 +125,31 @@ class Mine:
                 for nlist in neighbours:
                     pile.append(nlist)
 
-        if self.grid[r][c] == 9:
-            self.Condition(r, c)
-            return
-
-        if self.opencells >= self.totalcells:
-            self.status = 'won'
+        if self.condition(r, c):
+            return self.Showmines()
+        
+        return revealed 
     
-    def Condition(self, r, c):
-        # Did the player hit a mine?
+    def condition(self, r, c):
         if self.grid[r][c] == 9:
-            self.lose = True
             self.status = 'lost'
-            self.Showmines()
-            return
-
+            return True
+        
         # Did the player reveal every safe cell?
         if self.opencells >= self.totalcells:
             self.status = 'won'
-    
+
     def Showmines(self):
         coords = self.Getcoordinates(self.hgrid)
+        revealed = []
         for row, cell in coords:
             if self.grid[row][cell] == 9:
                 self.hgrid[row][cell] = self.grid[row][cell]
+                revealed.append((row, cell))
+
+        return revealed
     
+    # For future special use ( counts mines when counting )
     def count(self):
         counted_opencells = 0
 
