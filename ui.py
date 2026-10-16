@@ -2,13 +2,13 @@ from typing import Tuple
 import customtkinter as ctk
 from Minesweeper import Mine
 class MinesweeperApp(ctk.CTk):
-    def __init__(self, size, mines, **kwargs):
+    def __init__(self, board_size, mine_count, **kwargs):
         super().__init__(**kwargs)
         
         self.title('Minesweeper')
         
-        self.size = size
-        self.mines = mines
+        self.size = board_size
+        self.mines = mine_count
         self.cells = {}
         
         self.game = Mine()
